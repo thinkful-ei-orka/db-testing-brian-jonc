@@ -43,20 +43,26 @@ describe(`Shopping List service object`, function () {
 
   before(() => db('shopping_list').truncate());
 
-  before(() => {
-    return db.into('shopping_list').insert(testItems);
-  });
+  afterEach(() => db('shopping_list').truncate());
 
-  describe(`getAllItems()`, () => {
-    it(`resolves all articles from 'shopping_list table'`, () => {
-      //   const expectedItems = testItems.map((item) => ({
-      //     ...item,
-      //     checked: false,
-      //   }));
-      return ShoppingListServer.getAllItems(db).then((actual) =>
-        expect(actual).to.eql(testItems)
-      );
+  after(() => db.destroy());
+
+  context('blablabla', () => {
+    before(() => {
+      return db.into('shopping_list').insert(testItems);
+    });
+
+    describe(`getAllItems()`, () => {
+      it(`resolves all items from 'shopping_list table'`, () => {
+        return ShoppingListServer.getAllItems(db)
+          .then((actual) => {
+            expect(actual).to.eql(testItems.map(item => ({
+              ...item,
+              date_added: new Date(item.date_added)
+            })))
+          });
+      });
     });
   });
-  after(() => db.destroy());
+
 });
